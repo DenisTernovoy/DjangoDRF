@@ -14,9 +14,7 @@ class CustomUser(AbstractUser):
     avatar = models.ImageField(upload_to="avatar/", null=True, blank=True)
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = [
-        "username",
-    ]
+    REQUIRED_FIELDS = []
 
     class Meta:
         verbose_name = "Пользователь"
