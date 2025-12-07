@@ -10,7 +10,7 @@ class Command(BaseCommand):
         Payment.objects.all().delete()
 
         Payment.objects.create(
-            user_id=1,
+            user_id=2,
             pay_date=datetime.now(),
             lesson_id=1,
             pay_amount=1000,
@@ -18,7 +18,7 @@ class Command(BaseCommand):
         )
 
         Payment.objects.create(
-            user_id=1,
+            user_id=2,
             pay_date=datetime.now(),
             course_id=1,
             pay_amount=10000,
