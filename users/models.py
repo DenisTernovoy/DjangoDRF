@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+from materials.models import Lesson, Course
+
 
 # Create your models here.
 class CustomUser(AbstractUser):
@@ -19,3 +21,36 @@ class CustomUser(AbstractUser):
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
+
+
+class Payment(models.Model):
+
+    TYPES_OF_PAY = [
+        ("cash", "Наличные"),
+        ("transaction", "Перевод на счет"),
+    ]
+
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        verbose_name="Пользователь",
+        related_name="payments",
+    )
+    pay_date = models.DateField()
+    lesson = models.ForeignKey(
+        Lesson, on_delete=models.CASCADE, null=True, blank=True, related_name="payments"
+    )
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, null=True, blank=True, related_name="payments"
+    )
+    pay_amount = models.IntegerField()
+    pay_type = models.CharField(
+        choices=TYPES_OF_PAY, max_length=30, null=True, blank=True
+    )
+
+    class Meta:
+        verbose_name = "Платеж"
+        verbose_name_plural = "Платежи"
+
+    def __str__(self):
+        return f"{self.user.email} - {self.pay_amount}"
