@@ -27,7 +27,9 @@ class Lesson(models.Model):
         upload_to="preview/", verbose_name="Превью", null=True, blank=True
     )
     url = models.URLField(verbose_name="Ссылка на видео")
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Курс")
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, verbose_name="Курс", related_name="lessons"
+    )
 
     def __str__(self):
         return self.name
