@@ -27,3 +27,10 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = "__all__"
+
+
+class CustomUserSerializerAny(serializers.ModelSerializer):
+
+    class Meta:
+        model = CustomUser
+        fields = ("email", "city")
