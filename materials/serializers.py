@@ -1,13 +1,15 @@
 from rest_framework import serializers
-from rest_framework.permissions import IsAuthenticated
-
 from materials.models import Course, Lesson
+from materials.validators import LessonValidator
 
 
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = "__all__"
+        validators = [
+            LessonValidator("url"),
+        ]
 
 
 class CourseSerializer(serializers.ModelSerializer):
