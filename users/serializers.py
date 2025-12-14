@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from users.models import CustomUser, Payment
 
 
@@ -27,3 +27,10 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = "__all__"
+
+
+class CustomUserSerializerAny(serializers.ModelSerializer):
+
+    class Meta:
+        model = CustomUser
+        fields = ("email", "city")
