@@ -7,6 +7,8 @@ class LessonValidator:
 
     def __call__(self, value):
         reformatted_value = dict(value).get("url")
-        print(reformatted_value)
-        if "youtube.com" not in reformatted_value:
-            raise ValidationError("Нельзя использовать сторонние ссылки на материалы")
+        if reformatted_value:
+            if "youtube.com" not in reformatted_value:
+                raise ValidationError(
+                    "Нельзя использовать сторонние ссылки на материалы"
+                )
