@@ -22,10 +22,26 @@ class CourseSerializer(serializers.ModelSerializer):
 class CourseCountSerializer(serializers.ModelSerializer):
     count_lesson = serializers.SerializerMethodField()
     lessons = LessonSerializer(many=True, read_only=True)
+    subscription = serializers.SerializerMethodField()
 
     def get_count_lesson(self, obj):
         return obj.lessons.count()
 
+    def get_subscription(self, obj):
+        if obj.course.exists():
+            flag = "Подписка активна"
+        else:
+            flag = "Подписка неактивна"
+        return flag
+
     class Meta:
         model = Course
-        fields = ("id", "name", "preview", "description", "count_lesson", "lessons")
+        fields = (
+            "id",
+            "name",
+            "preview",
+            "description",
+            "count_lesson",
+            "lessons",
+            "subscription",
+        )
