@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from materials.models import Course, Lesson
+from materials.models import Course, Lesson, Subscription
 from materials.validators import LessonValidator
 
 
@@ -28,7 +28,9 @@ class CourseCountSerializer(serializers.ModelSerializer):
         return obj.lessons.count()
 
     def get_subscription(self, obj):
-        if obj.course.exists():
+        user = self.context["request"].user
+
+        if Subscription.objects.filter(subscriber=user, course=obj).exists():
             flag = "Подписка активна"
         else:
             flag = "Подписка неактивна"
