@@ -24,6 +24,7 @@ urlpatterns = [
         views.LessonDestroyAPIView.as_view(),
         name="lesson-delete",
     ),
+    path("subscribe/", views.SubscribeView.as_view(), name="subscribe"),
 ]
 
 urlpatterns += material_router.urls
