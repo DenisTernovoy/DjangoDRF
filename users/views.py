@@ -109,5 +109,7 @@ def check_status_payment(request):
         return Response("Платежа с таким id не существует")
 
     result = check_stripe_status(payment.session_id)
+    payment.status = result
+    payment.save()
 
     return Response(result)
