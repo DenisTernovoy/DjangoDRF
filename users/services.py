@@ -14,9 +14,9 @@ def create_stripe_session(price: str):
     }
     response = requests.post(
         f"{settings.STRIPE_BASE_URL}/v1/checkout/sessions", headers=headers, data=data
-    )
+    ).json()
 
-    return response.json()["url"]
+    return response["url"], response["id"]
 
 
 def create_stripe_price(
@@ -36,3 +36,15 @@ def create_stripe_price(
     )
 
     return response.json()
+
+
+def check_stripe_status(stripe_session_id: str) -> str:
+    """Проверка статуса платежа страйп"""
+
+    headers = {"Authorization": f"Bearer {settings.STRIPE_API_KEY}"}
+    response = requests.get(
+        f"{settings.STRIPE_BASE_URL}/v1/checkout/sessions/{stripe_session_id}",
+        headers=headers,
+    )
+
+    return response.json()["status"]

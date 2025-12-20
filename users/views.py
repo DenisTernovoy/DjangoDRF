@@ -1,3 +1,4 @@
+from rest_framework.decorators import api_view
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics
@@ -15,7 +16,11 @@ from users.serializers import (
     CustomUserPaymentSerializer,
     CustomUserSerializerAny,
 )
-from users.services import create_stripe_price, create_stripe_session
+from users.services import (
+    create_stripe_price,
+    create_stripe_session,
+    check_stripe_status,
+)
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
@@ -89,4 +94,20 @@ class PaymentAPIView(APIView):
         )
         result = create_stripe_session(price["id"])
 
-        return Response({"pay_url": result})
+        payment.session_id = result[1]
+        payment.save()
+
+        return Response({"pay_url": result[0]})
+
+
+@api_view(["GET"])
+def check_status_payment(request):
+
+    try:
+        payment = Payment.objects.get(pk=request.data["payment"])
+    except ObjectDoesNotExist:
+        return Response("Платежа с таким id не существует")
+
+    result = check_stripe_status(payment.session_id)
+
+    return Response(result)

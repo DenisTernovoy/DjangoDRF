@@ -49,6 +49,12 @@ class Payment(models.Model):
     pay_type = models.CharField(
         choices=TYPES_OF_PAY, max_length=30, null=True, blank=True
     )
+    status = models.CharField(
+        max_length=25, default="open", verbose_name="Статус платежа"
+    )
+    session_id = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name="ID платежа в stripe"
+    )
 
     class Meta:
         verbose_name = "Платеж"
