@@ -1,12 +1,17 @@
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from users.models import CustomUser, Payment
+from rest_framework.validators import ValidationError
+
+from users.validators import PaymentValidator
 
 
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = "__all__"
+        validators = [
+            PaymentValidator("course", "lesson"),
+        ]
 
 
 class CustomUserPaymentSerializer(serializers.ModelSerializer):
