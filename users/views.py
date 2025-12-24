@@ -92,12 +92,12 @@ class PaymentAPIView(APIView):
         price = create_stripe_price(
             payment.pay_amount, payment.course if payment.course else payment.lesson
         )
-        result = create_stripe_session(price["id"])
+        payment_url, payment_id = create_stripe_session(price["id"])
 
-        payment.session_id = result[1]
+        payment.session_id = payment_id
         payment.save()
 
-        return Response({"pay_url": result[0]})
+        return Response({"pay_url": payment_url})
 
 
 @api_view(["GET"])

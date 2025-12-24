@@ -2,12 +2,12 @@ import requests
 from config import settings
 
 
-def create_stripe_session(price: str):
+def create_stripe_session(price: str) -> tuple[str, str]:
     """Создает сессию страйп"""
 
     headers = {"Authorization": f"Bearer {settings.STRIPE_API_KEY}"}
     data = {
-        "success_url": "http://127.0.0.1:8000/",
+        "success_url": settings.BASE_SERVER_URL,
         "line_items[0][price]": price,
         "line_items[0][quantity]": 1,
         "mode": "payment",

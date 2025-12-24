@@ -159,3 +159,5 @@ SIMPLE_JWT = {
 
 STRIPE_BASE_URL = "https://api.stripe.com"
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
+
+BASE_SERVER_URL = os.getenv("BASE_SERVER_URL")
