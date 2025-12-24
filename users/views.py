@@ -1,9 +1,13 @@
+from rest_framework.decorators import api_view
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.db.models import ObjectDoesNotExist
 
+from materials.models import Course, Lesson
 from users.models import CustomUser, Payment
 from users.permissions import IsUser
 from users.serializers import (
@@ -11,6 +15,11 @@ from users.serializers import (
     PaymentSerializer,
     CustomUserPaymentSerializer,
     CustomUserSerializerAny,
+)
+from users.services import (
+    create_stripe_price,
+    create_stripe_session,
+    check_stripe_status,
 )
 
 
@@ -50,3 +59,57 @@ class PaymentListAPIView(generics.ListAPIView):
     ordering_fields = [
         "pay_date",
     ]
+
+
+class PaymentCreateAPIView(generics.CreateAPIView):
+    """Создает объект модели платежа"""
+
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+
+    def perform_create(self, serializer):
+        payment = serializer.save(user=self.request.user)
+        if payment.course:
+            payment.pay_amount = payment.course.amount
+        else:
+            payment.pay_amount = payment.lesson.amount
+        payment.save()
+
+
+class PaymentAPIView(APIView):
+    """Создание оплаты курса или урока"""
+
+    queryset = Payment.objects.all()
+
+    def post(self, *args, **kwargs):
+        data = self.request.data
+
+        try:
+            payment = Payment.objects.get(pk=data["payment"])
+        except ObjectDoesNotExist:
+            return Response("Платежа с таким id не существует")
+
+        price = create_stripe_price(
+            payment.pay_amount, payment.course if payment.course else payment.lesson
+        )
+        payment_url, payment_id = create_stripe_session(price["id"])
+
+        payment.session_id = payment_id
+        payment.save()
+
+        return Response({"pay_url": payment_url})
+
+
+@api_view(["GET"])
+def check_status_payment(request):
+
+    try:
+        payment = Payment.objects.get(pk=request.data["payment"])
+    except ObjectDoesNotExist:
+        return Response("Платежа с таким id не существует")
+
+    result = check_stripe_status(payment.session_id)
+    payment.status = result
+    payment.save()
+
+    return Response(result)

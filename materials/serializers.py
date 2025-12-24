@@ -29,12 +29,7 @@ class CourseCountSerializer(serializers.ModelSerializer):
 
     def get_subscription(self, obj):
         user = self.context["request"].user
-
-        if Subscription.objects.filter(subscriber=user, course=obj).exists():
-            flag = "Подписка активна"
-        else:
-            flag = "Подписка неактивна"
-        return flag
+        return Subscription.objects.filter(subscriber=user, course=obj).exists()
 
     class Meta:
         model = Course
