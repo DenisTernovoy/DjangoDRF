@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import generics, status, viewsets
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
@@ -6,9 +7,13 @@ from rest_framework.views import APIView
 
 from materials.models import Course, Lesson, Subscription
 from materials.paginators import LessonAndCoursePaginator
-from materials.serializers import (CourseCountSerializer, CourseSerializer,
-                                   LessonSerializer)
-from materials.tasks import send_information_about_course
+from materials.serializers import (
+    CourseCountSerializer,
+    CourseSerializer,
+    LessonSerializer,
+)
+from materials.services import get_recipient_list
+from materials.tasks import send_email_notice, send_information_about_course
 from users.permissions import IsModer, IsOwner
 
 
@@ -41,16 +46,13 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         instance = self.get_object()
+        instance.last_update = timezone.now()
+
         serializer = self.get_serializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
-        subscriptions = Subscription.objects.filter(course=instance.pk)
-        user_list_email = []
-
-        for sub in subscriptions:
-            user_list_email.append(sub.subscriber.email)
-
+        user_list_email = get_recipient_list(instance.pk)
         send_information_about_course.delay(user_list_email)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -88,6 +90,17 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = (IsAuthenticated, IsModer | IsOwner)
+
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        course = instance.course.pk
+        send_email_notice.delay(course)
+
+        return Response(serializer.data)
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
