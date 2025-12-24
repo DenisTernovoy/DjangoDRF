@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from users.models import CustomUser, Payment
 from rest_framework.validators import ValidationError
 
+from users.models import CustomUser, Payment
 from users.validators import PaymentValidator
 
 

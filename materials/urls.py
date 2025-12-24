@@ -1,7 +1,8 @@
-from rest_framework import routers
-from materials.apps import MaterialsConfig
-from materials import views
 from django.urls import path
+from rest_framework import routers
+
+from materials import views
+from materials.apps import MaterialsConfig
 
 app_name = MaterialsConfig.name
 

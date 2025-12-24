@@ -1,4 +1,4 @@
-from rest_framework import viewsets, generics
+from rest_framework import generics, status, viewsets
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -7,10 +7,11 @@ from rest_framework.views import APIView
 from materials.models import Course, Lesson, Subscription
 from materials.paginators import LessonAndCoursePaginator
 from materials.serializers import (
+    CourseCountSerializer,
     CourseSerializer,
     LessonSerializer,
-    CourseCountSerializer,
 )
+from materials.tasks import send_information_about_course
 from users.permissions import IsModer, IsOwner
 
 
@@ -40,6 +41,22 @@ class CourseViewSet(viewsets.ModelViewSet):
             return Course.objects.all()
         else:
             return Course.objects.filter(owner=self.request.user.id)
+
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        subscriptions = Subscription.objects.filter(course=instance.pk)
+        user_list_email = []
+
+        for sub in subscriptions:
+            user_list_email.append(sub.subscriber.email)
+
+        send_information_about_course.delay(user_list_email)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class LessonCreateAPIView(generics.CreateAPIView):

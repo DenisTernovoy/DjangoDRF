@@ -1,15 +1,13 @@
+from django.urls import path
 from rest_framework import routers
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 from users.views import (
     CustomUserViewSet,
-    PaymentListAPIView,
     PaymentAPIView,
     PaymentCreateAPIView,
+    PaymentListAPIView,
     check_status_payment,
-)
-from django.urls import path
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
 )
 
 app_name = "users"
