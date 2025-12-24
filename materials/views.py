@@ -6,11 +6,8 @@ from rest_framework.views import APIView
 
 from materials.models import Course, Lesson, Subscription
 from materials.paginators import LessonAndCoursePaginator
-from materials.serializers import (
-    CourseCountSerializer,
-    CourseSerializer,
-    LessonSerializer,
-)
+from materials.serializers import (CourseCountSerializer, CourseSerializer,
+                                   LessonSerializer)
 from materials.tasks import send_information_about_course
 from users.permissions import IsModer, IsOwner
 

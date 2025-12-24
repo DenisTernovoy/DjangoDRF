@@ -10,17 +10,11 @@ from rest_framework.views import APIView
 from materials.models import Course, Lesson
 from users.models import CustomUser, Payment
 from users.permissions import IsUser
-from users.serializers import (
-    CustomUserPaymentSerializer,
-    CustomUserSerializer,
-    CustomUserSerializerAny,
-    PaymentSerializer,
-)
-from users.services import (
-    check_stripe_status,
-    create_stripe_price,
-    create_stripe_session,
-)
+from users.serializers import (CustomUserPaymentSerializer,
+                               CustomUserSerializer, CustomUserSerializerAny,
+                               PaymentSerializer)
+from users.services import (check_stripe_status, create_stripe_price,
+                            create_stripe_session)
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
