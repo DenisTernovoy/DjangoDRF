@@ -1,25 +1,25 @@
+from django.db.models import ObjectDoesNotExist
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.filters import OrderingFilter
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.db.models import ObjectDoesNotExist
 
 from materials.models import Course, Lesson
 from users.models import CustomUser, Payment
 from users.permissions import IsUser
 from users.serializers import (
-    CustomUserSerializer,
-    PaymentSerializer,
     CustomUserPaymentSerializer,
+    CustomUserSerializer,
     CustomUserSerializerAny,
+    PaymentSerializer,
 )
 from users.services import (
+    check_stripe_status,
     create_stripe_price,
     create_stripe_session,
-    check_stripe_status,
 )
 
 

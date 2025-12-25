@@ -19,6 +19,7 @@ class Course(models.Model):
         blank=True,
     )
     amount = models.PositiveIntegerField(default=1000, verbose_name="Стоимость курса")
+    last_update = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
