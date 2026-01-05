@@ -46,7 +46,6 @@ class LessonTestCase(APITestCase):
             "url": "https://youtube.com/some_params",
         }
         response = self.client.post(url, data=params)
-        data = response.json()
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Lesson.objects.all().count(), 2)
