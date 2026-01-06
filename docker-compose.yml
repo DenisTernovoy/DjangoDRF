@@ -8,22 +8,27 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     env_file:
       - .env
+    environment:
+      - DB_HOST=db
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
   db:
     image: postgres
-    expose:
-      - "5432"
+    ports:
+      - "${DB_PORT}:5432"
     environment:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
       - DB_HOST=db
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
-      interval: 30s
-      timeout: 10s
+      test: "pg_isready -U ${DB_USER}"
+      interval: 3s
+      timeout: 3s
       retries: 5
   redis:
     image: redis
@@ -37,17 +42,27 @@ services:
     command: celery -A config worker -l INFO -P eventlet
     env_file:
       - .env
+    environment:
+      - DB_HOST=db
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     depends_on:
       - redis
       - db
+      - web
   beat:
     build: .
     command: celery -A config beat -l info -S django
     env_file:
       - .env
+    environment:
+      - DB_HOST=db
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     depends_on:
       - redis
       - db
+      - celery
 
 volumes:
   postgres_data:
