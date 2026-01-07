@@ -7,7 +7,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from materials.models import Course, Lesson
 from users.models import CustomUser, Payment
 from users.permissions import IsUser
 from users.serializers import (
