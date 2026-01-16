@@ -2,7 +2,7 @@
 FROM python:3.13
 
 # Устанавливаем рабочую директорию в контейнере
-WORKDIR ./
+WORKDIR /app
 
 RUN pip install poetry
 
