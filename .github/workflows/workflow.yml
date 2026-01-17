@@ -59,8 +59,7 @@ jobs:
       - name: Deploy to Server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            cd /
-            cd home/denis/DjangoDRF/
-            sudo docker compose stop
-            sudo docker compose up --build -d
+            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp
+            sudo docker stop myapp || true
+            sudo docker rm myapp || true
           EOF
