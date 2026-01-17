@@ -20,15 +20,6 @@ jobs:
           pip install poetry
           poetry install --no-root
 
-      - name: Run migrate
-        env:
-          NAME: drfcoursework
-          USER: postgres
-          PASSWORD: postgres
-          HOST: localhost
-          DJANGO_SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        run: poetry run python manage.py migrate
-
       - name: Run tests
         env:
           NAME: drfcoursework
