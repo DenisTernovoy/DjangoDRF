@@ -7,7 +7,7 @@ WORKDIR /app
 RUN pip install poetry
 
 # Копируем файл с зависимостями и устанавливаем их
-COPY pyproject.toml poetry.lock ./
+COPY pyproject.toml poetry.lock .env ./
 RUN poetry install --no-root
 
 # Копируем остальные файлы проекта в контейнер
