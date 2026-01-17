@@ -21,7 +21,11 @@ jobs:
           poetry install --no-root
 
       - name: Run migrate
+        env:
+          DJANGO_SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: poetry run python manage.py migrate
 
       - name: Run tests
+        env:
+          DJANGO_SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: poetry run python manage.py test
