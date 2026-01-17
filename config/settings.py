@@ -193,6 +193,7 @@ EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
 
 
+
 if "test" in sys.argv:
     DATABASES = {
         "default": {
