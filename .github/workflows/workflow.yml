@@ -63,6 +63,6 @@ jobs:
             sudo docker stop myapp || true
             sudo docker rm myapp || true
             cd /
-            cd DjangoDRF/
+            cd home/denis/DjangoDRF/
             sudo docker compose up --build -d
           EOF
