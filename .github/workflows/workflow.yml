@@ -62,4 +62,7 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp
             sudo docker stop myapp || true
             sudo docker rm myapp || true
+            cd DjangoDRF/
+            sudo docker compose stop || true
+            sudo docker compose up --build -d
           EOF
