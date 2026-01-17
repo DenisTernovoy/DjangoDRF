@@ -7,11 +7,12 @@ WORKDIR /app
 RUN pip install poetry
 
 # Копируем файл с зависимостями и устанавливаем их
-COPY pyproject.toml poetry.lock .env ./
+COPY pyproject.toml poetry.lock ./
 RUN poetry install --no-root
 
 # Копируем остальные файлы проекта в контейнер
 COPY . .
+COPY .env /app/.env
 
 # Открываем порт 8000 для взаимодействия с приложением
 EXPOSE 8000
