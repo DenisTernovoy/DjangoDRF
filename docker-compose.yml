@@ -1,6 +1,6 @@
 services:
   web:
-    build: .
+    build: denistern/myapp
     command: >
         bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
@@ -17,7 +17,7 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
   db:
-    image: postgres
+    image: postgres:17-alpine
     ports:
       - "${DB_PORT}:5432"
     environment:
@@ -30,6 +30,8 @@ services:
       interval: 3s
       timeout: 3s
       retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
   redis:
     image: redis
     command: redis-server
@@ -37,6 +39,8 @@ services:
       - "6379:6379"
     depends_on:
       - db
+    volumes:
+      - redis_data:/data
   celery:
     build: .
     command: celery -A config worker -l INFO -P eventlet
@@ -66,3 +70,4 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:

@@ -1,3 +1,5 @@
+from unittest import mock
+
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -28,12 +30,12 @@ class LessonTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data.get("name"), self.lesson.name)
 
-    def test_update_lesson(self):
+    @mock.patch("materials.tasks.send_email_notice.delay")
+    def test_update_lesson(self, mock_delay):
         url = reverse("materials:lesson-update", args=(self.lesson.pk,))
         params = {"name": "Test lesson NEW"}
         response = self.client.patch(url, data=params)
         data = response.json()
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data.get("name"), params["name"])
 
