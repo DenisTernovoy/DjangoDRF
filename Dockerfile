@@ -12,11 +12,9 @@ RUN poetry install --no-root
 
 # Копируем остальные файлы проекта в контейнер
 COPY . .
-COPY .env /app/
 
 # Открываем порт 8000 для взаимодействия с приложением
 EXPOSE 8000
 
 # Определяем команду для запуска приложения
 ENTRYPOINT ["poetry", "run"]
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
