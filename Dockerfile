@@ -12,7 +12,7 @@ RUN poetry install --no-root
 
 # Копируем остальные файлы проекта в контейнер
 COPY . .
-COPY .env /app/.env
+COPY .env /app/
 
 # Открываем порт 8000 для взаимодействия с приложением
 EXPOSE 8000
